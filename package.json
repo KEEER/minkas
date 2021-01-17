@@ -1,0 +1,22 @@
+{
+  "name": "@keeer/minkas",
+  "version": "0.0.0-1",
+  "description": "A minimal KAS implementation for debugging",
+  "main": "index.js",
+  "bin": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KEEER/minkas.git"
+  },
+  "author": "Alan-Liang",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/KEEER/minkas/issues"
+  },
+  "homepage": "https://github.com/KEEER/minkas#readme",
+  "dependencies": {
+    "@koa/router": "^10.0.0",
+    "koa": "^2.13.1",
+    "koa-body": "^4.2.0"
+  }
+}

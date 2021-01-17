@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MinKAS Control</title>
+</head>
+<body>
+  <h1>MinKAS Control</h1>
+  <p>User ID: <input id="userid" value="000000000000"></p>
+  <ul>
+    <li><button onclick="setCookie('200')">Normal account</button></li>
+    <li><button onclick="setCookie('204')">No KEEER ID</button></li>
+    <li><button onclick="setCookie('400')">Invalid request</button></li>
+    <li><button onclick="setCookie('401')">Bad service token</button></li>
+    <li><button onclick="setCookie('402')">No kredit</button></li>
+    <li><button onclick="setCookie('404')">Nonexistent account</button></li>
+    <li><button onclick="setCookie('429')">Rate limited</button></li>
+    <li><button onclick="setCookie('500')">Internal server error</button></li>
+  </ul>
+  <script>
+    function setCookie (status) {
+      if (!/^[0-9a-f]{12}$/i.test(userid.value)) return alert('Malformed User ID')
+      document.cookie = 'kas-account-token=00000000-0000-0000-0' + status + '-' + userid.value + '; domain=.keeer.net; path=/; expires=Fri, 01 Jan 2077 00:00:00 GMT'
+      alert('ok')
+    }
+  </script>
+</body>
+</html>
