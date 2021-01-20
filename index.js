@@ -9,13 +9,18 @@ const app = new Koa()
 const router = new Router()
 app.use((ctx, next) => {
   ctx.set('Vary', 'Origin')
-  ctx.set('Access-Control-Allow-Origin', ctx.get('origin'))
+  const origin = ctx.get('origin')
+  if (origin) ctx.set('Access-Control-Allow-Origin', origin)
   ctx.set('Access-Control-Allow-Credentials', 'true')
   ctx.set('Access-Control-Allow-Methods', ctx.get('Access-Control-Request-Method') || ctx.method)
   return next()
 })
 app.use(router.routes()).use(router.allowedMethods())
-app.listen(process.env.PORT || 8081)
+const port = Number(process.env.MINKAS_PORT) || 8081
+app.listen(port)
+const url = `http://${process.env.MINKAS_HOSTNAME || 'localhost'}:${port}/`
+console.log(`MinKAS started on ${url}`)
+if (!process.env.SILENT) require('open')(url)
 
 const badService = Symbol()
 const statuses = {
@@ -46,7 +51,8 @@ const invalid = { status: 1, message: '非法请求', code: 'EINVALID_REQUEST' }
 const unauthorized = { status: -2, message: '您尚未登录', code: 'EUNAUTHORIZED' }
 const notfound = { status: 2, message: '这个帐号不存在。', code: 'ENOTFOUND' }
 
-const index = fs.readFileSync(require.resolve('./index.html'))
+const cookieDomain = process.env.MINKAS_COOKIE_DOMAIN ? `domain=${process.env.MINKAS_COOKIE_DOMAIN};` : ''
+const index = fs.readFileSync(require.resolve('./index.html')).toString().replace('__domain__', cookieDomain)
 router.get('/', ctx => {
   ctx.body = index
   ctx.set('Content-Type', 'text/html; charset=utf-8')
@@ -80,10 +86,11 @@ router.post('/api/pay', koaBody(), (ctx, next) => {
   if (ctx.state.user.kredit < amount) return ctx.body = { status: 4, message: '余额不足', code: 'EINSUFFICIENT_KREDIT' }
   return { status: 0 }
 })
+
+const idframeCode = fs.readFileSync(require.resolve('./appbar.dist.js')).toString()
 router.get('/api/idframe', getCookieUser, ctx => {
-  ctx.body = ctx.state.user
-    ? 'console.log(' + JSON.stringify(ctx.state.user).replace(/\//g, '\\u002F') + ')'
-    : 'console.log(\'not logged in\')'
+  const data = ctx.state.user ? { ...ctx.state.user, loggedIn: true } : { loggedIn: false }
+  ctx.body = idframeCode.replace('__data__', JSON.stringify({ ...data, base: ctx.request.origin }).replace(/\//g, '\\u002F'))
   ctx.set('Content-Type', 'application/javascript; charset=utf-8')
   ctx.set('Cache-Control', 'max-age=0')
 })

@@ -21,7 +21,7 @@
   <script>
     function setCookie (status) {
       if (!/^[0-9a-f]{12}$/i.test(userid.value)) return alert('Malformed User ID')
-      document.cookie = 'kas-account-token=00000000-0000-0000-0' + status + '-' + userid.value + '; domain=.keeer.net; path=/; expires=Fri, 01 Jan 2077 00:00:00 GMT'
+      document.cookie = 'kas-account-token=00000000-0000-0000-0' + status + '-' + userid.value + '; __domain__ path=/; expires=Fri, 01 Jan 2077 00:00:00 GMT'
       alert('ok')
     }
   </script>
